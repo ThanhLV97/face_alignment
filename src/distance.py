@@ -16,7 +16,6 @@ class Distance():
         self.pose_angle = None
 
 
-
     def check_face_pose(self):
         """[summary]
 
@@ -26,10 +25,11 @@ class Distance():
         mid_mouth = (round((self.landmark['mouth_left'][0] + self.landmark['mouth_right'][0])/2), \
                         round((self.landmark['mouth_right'][1] + self.landmark['mouth_left'][1])/2))
         
-        d_left_eye = abs(self._calc_distance(self.landmark['nose'], mid_mouth, self.landmark['left_eye']))
-        d_right_eye = abs(self._calc_distance(self.landmark['nose'], mid_mouth, self.landmark['right_eye']))
-        d_test = self._calc_distance((1, 2), (1,4), (3, 3))
-        
+        d_left_eye = abs(self._measure_distance(self.landmark['nose'], mid_mouth,
+                                                self.landmark['left_eye']))
+        d_right_eye = abs(self._measure_distance(self.landmark['nose'], mid_mouth,
+                                                self.landmark['right_eye']))
+
         # Check distance
         if d_left_eye > d_right_eye:
             ratio = d_right_eye / d_left_eye
@@ -55,16 +55,19 @@ class Distance():
         pb = np.asarray(point_b)
         pc = np.asarray(point_c)
         return np.cross(pb-pa, pc-pa) / np.linalg.norm(pb-pa)
-    
+
+
     def measure_angle_eyes(self):
         """ Measure angle according to eyes cordinate"""
 
         # Draw line between left eye and right eye
         img = cv2.line(self.img, self.landmark['left_eye'],\
                     self.landmark['right_eye'], color=(255, 0, 0), thickness=2)
-        
-        img = cv2.circle(img, self.landmark['left_eye'], radius=0, color=(0,0,255), thickness=2)
-        img = cv2.circle(img, self.landmark['nose'], radius=0, color=(0, 0, 255), thickness=10)
+
+        img = cv2.circle(img, self.landmark['left_eye'],\
+                            radius=0, color=(0,0,255), thickness=2)
+        img = cv2.circle(img, self.landmark['nose'], \
+                            radius=0, color=(0, 0, 255), thickness=10)
 
 
         if self.landmark['left_eye'][1] < self.landmark['right_eye'][1]:
