@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 
-class Alignment():
+class Distance():
     def __init__(self, landmark=None, img_path=None):
         """This module used to align face image and evaluate face pose of face   image
 
@@ -21,7 +21,7 @@ class Alignment():
         """[summary]
 
         Returns:
-            [type]: [description]
+            [float]: ratio distance between left eye and right eye
         """
         mid_mouth = (round((self.landmark['mouth_left'][0] + self.landmark['mouth_right'][0])/2), \
                         round((self.landmark['mouth_right'][1] + self.landmark['mouth_left'][1])/2))
@@ -30,6 +30,7 @@ class Alignment():
         d_right_eye = abs(self._calc_distance(self.landmark['nose'], mid_mouth, self.landmark['right_eye']))
         d_test = self._calc_distance((1, 2), (1,4), (3, 3))
         
+        # Check distance
         if d_left_eye > d_right_eye:
             ratio = d_right_eye / d_left_eye
         elif d_left_eye < d_right_eye:
@@ -56,7 +57,7 @@ class Alignment():
         return np.cross(pb-pa, pc-pa) / np.linalg.norm(pb-pa)
     
     def measure_angle_eyes(self):
-        """ Measure angle according to eyes position"""
+        """ Measure angle according to eyes cordinate"""
 
         # Draw line between left eye and right eye
         img = cv2.line(self.img, self.landmark['left_eye'],\
@@ -77,3 +78,5 @@ class Alignment():
             x = self.landmark['right_eye'][0] - self.landmark['left_eye'][0]
             self.pose_angle = np.arctan2(y, x)
             print(self.pose_angle)
+
+        return self.pose_angle
